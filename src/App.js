@@ -1,16 +1,14 @@
 import "./App.scss";
 import { useState, useEffect } from "react";
 
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-
-import Snackbar from "@mui/material/Snackbar";
+import { useToast } from '@chakra-ui/react'
+import { DeleteIcon } from '@chakra-ui/icons'
 
 function App() {
   const [todo, setTodo] = useState([]);
   const [data, setData] = useState({ data: "", state: undefined });
   const [completed, setCompleted] = useState(2);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [snackbar, setSnackbar] = useState("");
+  const toast = useToast()
 
   useEffect(() => {
     async function getItemFromLocalStorage() {
@@ -27,6 +25,18 @@ function App() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  const Toast = (title,des,status) => {
+    console.log(title,des,status)
+    toast({
+      title: title,
+      description: des,
+      status: status,
+      duration: 3000,
+      isClosable: true,
+      position: 'top-right'
+    })
+  }
+
   function handleAdd(event) {
     event.preventDefault();
     if (todo.length < 6) {
@@ -35,15 +45,12 @@ function App() {
         setData({ data: "", state: undefined });
         localStorage.setItem("Todo", JSON.stringify([...todo, data]));
 
-        setSnackbar(`Created - ${data.data}`);
-        setOpenAlert(true);
+        Toast(`Created - ${data.data}`,"",'success');
       } else {
-        setSnackbar("Please Enter Something . . .");
-        setOpenAlert(true);
+        Toast("Please Enter Something . . .","",'warning');
       }
     } else {
-      setSnackbar("You Can't make More Than 5 todo");
-      setOpenAlert(true);
+      Toast("You Can't make More Than 5 todo","",'info')
     }
   }
 
@@ -63,7 +70,6 @@ function App() {
               if (todo[index].state === 0) {
                 let data = todo;
                 data[index].state = 1;
-                console.log(data);
                 setTodo([...data]);
                 localStorage.setItem("Todo", JSON.stringify(data));
               }
@@ -77,27 +83,26 @@ function App() {
               if (todo[index].state === 0) {
                 if (window.confirm("This Todo is Not Done Yet")) {
                   let data = todo;
-                  setSnackbar(`Deleted - ${data[index].data}`);
-                  setOpenAlert(true);
+                  Toast(`Deleted - ${data[index].data}`,"",'error');
+        
                   data.splice(index, 1);
-                  console.log(data);
                   setTodo([...data]);
                   localStorage.setItem("Todo", JSON.stringify(data));
                 } else {
-                  setSnackbar("You Canceled The Operation");
-                  setOpenAlert(true);
+                  Toast("You Canceled The Operation","",'success');
+        
                 }
               } else {
                 let data = todo;
+                  Toast(`Deleted - ${data[index].data}`,"",'warning');
                 data.splice(index, 1);
-                console.log(data);
                 setTodo([...data]);
                 localStorage.setItem("Todo", JSON.stringify(data));
               }
               return 1;
             }}
           >
-            <DeleteRoundedIcon sx={{ color: "white" }} />
+            <DeleteIcon/>
           </button>
         </div>
       </>
@@ -106,16 +111,6 @@ function App() {
 
   return (
     <div className="App">
-      <Snackbar
-        autoHideDuration={3000}
-        TransitionComponent={"GrowTransition"}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        open={openAlert}
-        onClose={() => setOpenAlert(false)}
-        message={snackbar}
-        key={"snackbar"}
-        ContentProps={{ color: "white" }}
-      />
       <div className="ToDoHeading">TODO</div>
       <form
         className="Adder"
@@ -220,8 +215,8 @@ function App() {
                   console.log(data);
                   setTodo([...data]);
                   localStorage.setItem("Todo", JSON.stringify([...data]));
-                  setSnackbar("Deleted all completed tasks");
-                  setOpenAlert(true);
+                  Toast("Deleted all completed tasks","",'success');
+        
                 }}
               >
                 Clear Completed

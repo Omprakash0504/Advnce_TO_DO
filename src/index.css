@@ -22,5 +22,9 @@ body{
   align-items: center;
   justify-content: center;
   overflow-x: hidden;
-  /* background: #B6D159; */
+  background: linear-gradient(
+    135deg,
+    #8052ec,
+    #d161ff
+  );
 }
