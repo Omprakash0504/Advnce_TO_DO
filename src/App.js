@@ -1,14 +1,14 @@
 import "./App.scss";
 import { useState, useEffect } from "react";
 
-import { useToast } from '@chakra-ui/react'
-import { DeleteIcon } from '@chakra-ui/icons'
+import { useToast } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 function App() {
   const [todo, setTodo] = useState([]);
   const [data, setData] = useState({ data: "", state: undefined });
   const [completed, setCompleted] = useState(2);
-  const toast = useToast()
+  const toast = useToast();
 
   useEffect(() => {
     async function getItemFromLocalStorage() {
@@ -25,17 +25,17 @@ function App() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  const Toast = (title,des,status) => {
-    console.log(title,des,status)
+  const Toast = (title, des, status) => {
+    console.log(title, des, status);
     toast({
       title: title,
       description: des,
       status: status,
       duration: 3000,
       isClosable: true,
-      position: 'top-right'
-    })
-  }
+      position: "top-right",
+    });
+  };
 
   function handleAdd(event) {
     event.preventDefault();
@@ -45,12 +45,12 @@ function App() {
         setData({ data: "", state: undefined });
         localStorage.setItem("Todo", JSON.stringify([...todo, data]));
 
-        Toast(`Created - ${data.data}`,"",'success');
+        Toast(`Created - ${data.data}`, "", "success");
       } else {
-        Toast("Please Enter Something . . .","",'warning');
+        Toast("Please Enter Something . . .", "", "warning");
       }
     } else {
-      Toast("You Can't make More Than 5 todo","",'info')
+      Toast("You Can't make More Than 5 todo", "", "info");
     }
   }
 
@@ -83,18 +83,17 @@ function App() {
               if (todo[index].state === 0) {
                 if (window.confirm("This Todo is Not Done Yet")) {
                   let data = todo;
-                  Toast(`Deleted - ${data[index].data}`,"",'error');
-        
+                  Toast(`Deleted - ${data[index].data}`, "", "error");
+
                   data.splice(index, 1);
                   setTodo([...data]);
                   localStorage.setItem("Todo", JSON.stringify(data));
                 } else {
-                  Toast("You Canceled The Operation","",'success');
-        
+                  Toast("You Canceled The Operation", "", "success");
                 }
               } else {
                 let data = todo;
-                  Toast(`Deleted - ${data[index].data}`,"",'warning');
+                Toast(`Deleted - ${data[index].data}`, "", "warning");
                 data.splice(index, 1);
                 setTodo([...data]);
                 localStorage.setItem("Todo", JSON.stringify(data));
@@ -102,7 +101,7 @@ function App() {
               return 1;
             }}
           >
-            <DeleteIcon/>
+            <DeleteIcon />
           </button>
         </div>
       </>
@@ -211,12 +210,15 @@ function App() {
                 className="Clear"
                 onClick={() => {
                   let data = todo;
-                  data = data.filter((e) => e.state !== 1);
-                  console.log(data);
-                  setTodo([...data]);
-                  localStorage.setItem("Todo", JSON.stringify([...data]));
-                  Toast("Deleted all completed tasks","",'success');
-        
+                  if (data.some((e) => e.state === 1)) {
+                    data = data.filter((e) => e.state !== 1);
+                    console.log(data);
+                    setTodo([...data]);
+                    localStorage.setItem("Todo", JSON.stringify([...data]));
+                    Toast("Deleted all completed tasks", "", "success");
+                  } else {
+                    Toast("No Completed Tasks", "", "warning");
+                  }
                 }}
               >
                 Clear Completed
